@@ -12,7 +12,7 @@ def extract_title(markdown: str) -> str:
 
     raise ValueError("missing h1 header, cannot extract title")
 
-def generate_page_recursively(dir_path_content, template_path, dest_dir_path):
+def generate_page_recursively(dir_path_content, template_path, dest_dir_path, basepath):
     for item in os.listdir(dir_path_content):
         full_item = os.path.join(dir_path_content, item)
 
@@ -21,12 +21,12 @@ def generate_page_recursively(dir_path_content, template_path, dest_dir_path):
         if os.path.isfile(full_item):
             name, _ = os.path.splitext(new_dest)
 
-            generate_page(full_item, template_path, name + ".html")
+            generate_page(full_item, template_path, name + ".html", basepath)
         else:
-            generate_page_recursively(full_item, template_path, new_dest)
+            generate_page_recursively(full_item, template_path, new_dest, basepath)
         
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"[log] generating page from {from_path} to {dest_path} using {template_path}")
 
     with open(from_path, "r") as mdf:
@@ -40,6 +40,8 @@ def generate_page(from_path, template_path, dest_path):
 
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", md_html)
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
 
     dest_dir_path = os.path.dirname(dest_path)
     if dest_dir_path != "":

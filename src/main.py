@@ -1,10 +1,11 @@
 import os
 import shutil
+import sys
 from ntpath import isfile
 
 from generate import generate_page, generate_page_recursively
 
-PUBLIC_DIR = "public/"
+PUBLIC_DIR = "docs/"
 STATIC_DIR = "static/"
 
 def copy_to_folder(source, destination, sub=""):
@@ -28,6 +29,10 @@ def copy_to_folder(source, destination, sub=""):
 
 
 def main():
+    basepath = "/"
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+
     # setting up public/
     if os.path.exists(PUBLIC_DIR):
         shutil.rmtree(PUBLIC_DIR)
@@ -43,8 +48,8 @@ def main():
     # generating html
     source_path = "content/"
     template_path = "template.html"
-    dest_path = "public/"
-    generate_page_recursively(source_path, template_path, dest_path)
+    dest_path = PUBLIC_DIR
+    generate_page_recursively(source_path, template_path, dest_path, basepath)
 
 
 main()
